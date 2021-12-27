@@ -12,7 +12,7 @@ const client = mysql.createConnection({
     user: 'root',
     password: 'root',
     port : 3306,
-    database: 'sample'
+    database: 'todo_db'
 });
 
 client.connect(function (err) {
@@ -36,7 +36,7 @@ app.get('/todos', (req, res) => {
 app.post('/todo/create', (req, res) => {
     const task = req.body.nataskme;
     const task_limited_at = req.body.task_limited_at;
-    client.query('INSERT INTO todos SET ?', {task: task, task_limited_at: status}, (err, result) => {
+    client.query('INSERT INTO todos SET ?', {task: task, task_limited_at: task_limited_at}, (err, result) => {
         if (err) throw err;
         res.send(result);
     })
@@ -45,8 +45,9 @@ app.post('/todo/create', (req, res) => {
 // update 
 app.put('/todo/update', (req, res) => {
     const id = req.body.id;
-    const status = req.body.task_limited_at1    ;
-    client.query('UPDATE todo SET task = ? WHERE id = ?', [status, id], (err, result) => {
+    const task_limited_at = req.body.task_limited_at;
+    const task = req.body.task;
+    client.query('UPDATE todo SET task = ?, task_limited_at = ? WHERE id = ?', [task, task_limited_at, id], (err, result) => {
         if (err) throw err;
         client.query('SELECT * from user;', (err, rows, fields) => {
             if (err) throw err;
@@ -67,9 +68,8 @@ app.delete('/todo/delete', (req, res) => {
     });
 });
 
-app.listen(3001, () => console.log('Listening on port 3001!'))
 
 /* 2. listen()メソッドを実行して3000番ポートで待ち受け。*/
-var server = app.listen(3000, function(){
+var server = app.listen(3001, function(){
     console.log("Node.js is listening to PORT:" + server.address().port);
 });
